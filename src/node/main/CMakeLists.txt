@@ -1,0 +1,7 @@
+set(
+  COMPONENT_REQUIRES console)
+
+idf_component_register(
+  SRCS "main.c"
+#       "console.c"
+  INCLUDE_DIRS ".")

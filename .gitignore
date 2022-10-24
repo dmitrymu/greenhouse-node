@@ -56,3 +56,6 @@ dkms.conf
 
 # ESP-IDF 
 .devcontainer
+
+# Cmake
+build

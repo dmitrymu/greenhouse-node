@@ -1,0 +1,3 @@
+[submodule "src/node/components/esp32-ds18b20"]
+	path = src/node/components/esp32-ds18b20
+	url = https://github.com/DavidAntliff/esp32-ds18b20

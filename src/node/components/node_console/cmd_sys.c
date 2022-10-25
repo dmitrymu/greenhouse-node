@@ -60,7 +60,7 @@ static int cmd_sys(int argc, char **argv)
 
 static void register_cmd_sys()
 {
-    sys_args.op = arg_str1(NULL, NULL, "<op>", "operation: free/heap/version/tasks/restart");
+    sys_args.op = arg_str0(NULL, NULL, "<op>", "operation: free/heap/version/tasks/restart");
     sys_args.end = arg_end(1);
 
     const esp_console_cmd_t cmd = {

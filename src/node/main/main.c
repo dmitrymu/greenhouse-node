@@ -1,7 +1,7 @@
-#include "console.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "node_console.h"
 #include "nvs_flash.h"
 
 static void initialize_nvs(void)
@@ -17,10 +17,11 @@ static void initialize_nvs(void)
 
 void app_main(void)
 {
-  static const char *tag = "hello";
+  static const char *tag = "main";
 
   initialize_nvs();
 
+  console_run();
   // Should never be executed.
-  ESP_LOGI(tag, "Restarting now.");
+  ESP_LOGI(tag, "app_main exit.");
 }

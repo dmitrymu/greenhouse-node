@@ -1,4 +1,4 @@
-#include "console.h"
+#include "node_console.h"
 #include "cmd_sys.h"
 #include "esp_console.h"
 

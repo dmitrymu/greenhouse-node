@@ -6,7 +6,8 @@ set(
                      ) 
 
 idf_component_register(
-  SRCS "main.c"
+  SRCS "cmd_sys.c"
+       "main.c"
        "console.c"
        "onewire.c" 
   INCLUDE_DIRS ".")

@@ -11,6 +11,7 @@ idf_component_register(
        "onewire.c" 
   INCLUDE_DIRS "."
   REQUIRES node_console
+           node_wifi
            esp32-ds18b20
            esp32-owb
            nvs_flash

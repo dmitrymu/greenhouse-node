@@ -2,6 +2,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "node_console.h"
+#include "node_wifi.h"
 #include "nvs_flash.h"
 
 static void initialize_nvs(void)
@@ -20,6 +21,9 @@ void app_main(void)
   static const char *tag = "main";
 
   initialize_nvs();
+
+  wifi_init();
+  wifi_run();
 
   console_run();
   // Should never be executed.

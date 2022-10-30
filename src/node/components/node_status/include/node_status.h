@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 void node_status_init();
 
 void set_wifi_configured(bool status);

@@ -1,4 +1,5 @@
 #include "node_console.h"
+#include "cmd_wifi.h"
 #include "cmd_sys.h"
 #include "esp_console.h"
 
@@ -16,6 +17,7 @@ void console_run()
 
   esp_console_register_help_command();
   register_system();
+  register_wifi();
 
   esp_console_dev_uart_config_t hw_config = ESP_CONSOLE_DEV_UART_CONFIG_DEFAULT();
   ESP_ERROR_CHECK(esp_console_new_repl_uart(&hw_config, &repl_config, &repl));

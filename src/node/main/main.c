@@ -2,6 +2,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "node_console.h"
+#include "node_status.h"
 #include "node_wifi.h"
 #include "nvs_flash.h"
 
@@ -19,6 +20,8 @@ static void initialize_nvs(void)
 void app_main(void)
 {
   static const char *tag = "main";
+
+  node_status_init();
 
   initialize_nvs();
 

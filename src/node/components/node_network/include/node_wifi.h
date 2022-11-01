@@ -4,7 +4,7 @@
 
 void wifi_init();
 
-void wifi_run();
+bool wifi_run();
 
 void wifi_scan();
 

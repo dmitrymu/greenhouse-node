@@ -2,7 +2,7 @@
 #include "owb.h"
 #include "owb_rmt.h"
 #include "ds18b20.h"
-#include "node_mqtt.h"
+#include "node_network.h"
 
 #define GPIO_DS18B20_0 (GPIO_NUM_21)
 #define MAX_DEVICES (8)
@@ -172,7 +172,7 @@ void onewire_example()
         bzero(&msg, sizeof(msg));
         snprintf(msg.topic, sizeof(msg.topic), "nodes/node1/temperature/%s", rom_code_s);
         snprintf(msg.data, sizeof(msg.data), "{\"value\": %.1f, \"unit\": \"\\u00b0C\"}", readings[i]);
-        mqtt_send_message(&msg);
+        node_mqtt_send_message(&msg);
         /// --------------------------------------------------------
         //printf("  %d: %.1f    %d errors\n", i, readings[i], errors_count[i]);
       }
@@ -198,7 +198,7 @@ void onewire_task()
   TickType_t last_wake_time = xTaskGetTickCount();
   while(true)
   {
-    while(!mqtt_wait_for_connection(1000))
+    while(!node_network_ready_wait(1000))
     {
       // MQTT not ready
     }

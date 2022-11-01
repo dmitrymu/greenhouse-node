@@ -35,6 +35,12 @@ static int cmd_wifi_scan(int argc, char **argv)
     return 0;
 }
 
+static int cmd_wifi_status(int argc, char **argv)
+{
+    wifi_print_status();
+    return 0;
+}
+
 
 void register_wifi(void)
 {
@@ -64,7 +70,7 @@ void register_wifi(void)
         .command = "wifi.status",
         .help = "Log WiFi connection status",
         .hint = NULL,
-        .func = &wifi_print_status
+        .func = &cmd_wifi_status
     };
     ESP_ERROR_CHECK( esp_console_cmd_register(&log_cmd) );
 }

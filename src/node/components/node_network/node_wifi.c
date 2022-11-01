@@ -5,7 +5,7 @@
 #include "esp_wifi.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
-#include "node_status.h"
+//#include "node_status.h"
 #include "node_wifi.h"
 
 static const char *TAG = "wifi";
@@ -26,15 +26,15 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
     {
         esp_wifi_connect();
         xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-        set_wifi_configured(true);
-        set_wifi_connected(false);
+        // set_wifi_configured(true);
+        // set_wifi_connected(false);
         ESP_LOGW(TAG, "Disconnected");
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
         xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
         ESP_LOGI(TAG, "Connected");
-        set_wifi_connected(true);
+        // set_wifi_connected(true);
     }
 }
 
@@ -87,21 +87,19 @@ bool wifi_connect(const char *ssid, const char *pass)
     return wifi_connect_internal(&config);
 }
 
-void wifi_run()
+bool wifi_run()
 {
     wifi_config_t config;
     esp_err_t ret = esp_wifi_get_config(ESP_IF_WIFI_STA, &config);
     if (ret == ESP_OK)
     {
-        if (wifi_connect_internal(&config))
-        {
-            set_wifi_configured(true);
-        }
+        return wifi_connect_internal(&config);
     }
     else
     {
-        set_wifi_configured(false);
-        ESP_LOGW(TAG, "Wifi configuration not found in flash memory");
+        //set_wifi_configured(false);
+        ESP_LOGW(TAG, "No Wifi credentials found. Connect from console.");
+        return false;
     }
 }
 
@@ -127,11 +125,11 @@ void wifi_scan()
 
 void wifi_print_status()
 {
-    bool configured = get_wifi_configured();
-    bool connected = get_wifi_connected();
-    printf("Wifi status: %sconfigured, %sconnected\r\n",
-           configured ? "" : "not ",
-           connected ? "" : "not ");
+    // bool configured = get_wifi_configured();
+    // bool connected = get_wifi_connected();
+    // printf("Wifi status: %sconfigured, %sconnected\r\n",
+    //        configured ? "" : "not ",
+    //        connected ? "" : "not ");
 
     if (sta_netif == NULL)
     {

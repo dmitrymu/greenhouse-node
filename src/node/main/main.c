@@ -3,8 +3,7 @@
 #include "freertos/task.h"
 #include "node_console.h"
 #include "node_status.h"
-#include "node_wifi.h"
-#include "node_mqtt.h"
+#include "node_network.h"
 #include "nvs_flash.h"
 #include "onewire.h"
 
@@ -27,10 +26,10 @@ void app_main(void)
 
   initialize_nvs();
 
-  wifi_init();
-  wifi_run();
-
-  mqtt_start();
+  if (!node_network_start())
+  {
+    ESP_LOGW(tag, "Network requires WiFi credentials");
+  }
 
   onewire_start();
 

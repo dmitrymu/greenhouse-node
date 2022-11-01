@@ -4,7 +4,9 @@
 #include "node_console.h"
 #include "node_status.h"
 #include "node_wifi.h"
+#include "node_mqtt.h"
 #include "nvs_flash.h"
+#include "onewire.h"
 
 static void initialize_nvs(void)
 {
@@ -27,6 +29,10 @@ void app_main(void)
 
   wifi_init();
   wifi_run();
+
+  mqtt_start();
+
+  onewire_start();
 
   console_run();
   // Should never be executed.

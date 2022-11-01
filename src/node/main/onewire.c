@@ -1,7 +1,8 @@
-
+#include <string.h>
 #include "owb.h"
 #include "owb_rmt.h"
 #include "ds18b20.h"
+#include "node_mqtt.h"
 
 #define GPIO_DS18B20_0 (GPIO_NUM_21)
 #define MAX_DEVICES (8)
@@ -58,6 +59,7 @@ void onewire_example()
   {
     // Search for a known ROM code (LSB first):
     // For example: 0x1502162ca5b2ee28
+    /*
     OneWireBus_ROMCode known_device = {
         .fields.family = {0x28},
         .fields.serial_number = {0xee, 0xb2, 0xa5, 0x2c, 0x16, 0x02},
@@ -65,7 +67,7 @@ void onewire_example()
     };
     char rom_code_s[OWB_ROM_CODE_STRING_LENGTH];
     owb_string_from_rom_code(known_device, rom_code_s, sizeof(rom_code_s));
-    bool is_present = false;
+    bool is_present = true;
 
     owb_status search_status = owb_verify_rom(owb, known_device, &is_present);
     if (search_status == OWB_STATUS_OK)
@@ -76,6 +78,7 @@ void onewire_example()
     {
       printf("An error occurred searching for known device: %d", search_status);
     }
+    */
   }
 
   // Create DS18B20 devices on the 1-Wire bus
@@ -135,8 +138,8 @@ void onewire_example()
   {
     TickType_t last_wake_time = xTaskGetTickCount();
 
-    while (1)
-    {
+    // while (1)
+    // {
       ds18b20_convert_all(owb);
 
       // In this application all devices use the same resolution,
@@ -154,7 +157,7 @@ void onewire_example()
       }
 
       // Print results in a separate loop, after all have been read
-      printf("\nTemperature readings (degrees C): sample %d\n", ++sample_count);
+      //printf("\nTemperature readings (degrees C): sample %d\n", ++sample_count);
       for (int i = 0; i < num_devices; ++i)
       {
         if (errors[i] != DS18B20_OK)
@@ -162,11 +165,20 @@ void onewire_example()
           ++errors_count[i];
         }
 
-        printf("  %d: %.1f    %d errors\n", i, readings[i], errors_count[i]);
+        char rom_code_s[OWB_ROM_CODE_STRING_LENGTH];
+        owb_string_from_rom_code(device_rom_codes[i], rom_code_s, sizeof(rom_code_s));
+        
+        mqtt_message_t msg;
+        bzero(&msg, sizeof(msg));
+        snprintf(msg.topic, sizeof(msg.topic), "nodes/node1/temperature/%s", rom_code_s);
+        snprintf(msg.data, sizeof(msg.data), "{\"value\": %.1f, \"unit\": \"\\u00b0C\"}", readings[i]);
+        mqtt_send_message(&msg);
+        /// --------------------------------------------------------
+        //printf("  %d: %.1f    %d errors\n", i, readings[i], errors_count[i]);
       }
 
-      vTaskDelayUntil(&last_wake_time, SAMPLE_PERIOD / portTICK_PERIOD_MS);
-    }
+    //   vTaskDelayUntil(&last_wake_time, SAMPLE_PERIOD / portTICK_PERIOD_MS);
+    // }
   }
   else
   {
@@ -179,4 +191,19 @@ void onewire_example()
     ds18b20_free(&devices[i]);
   }
   owb_uninitialize(owb);
+}
+
+void onewire_task()
+{
+  TickType_t last_wake_time = xTaskGetTickCount();
+  while(true)
+  {
+    onewire_example();
+    vTaskDelayUntil(&last_wake_time, SAMPLE_PERIOD / portTICK_PERIOD_MS);
+  }
+}
+
+void onewire_start()
+{
+    xTaskCreate(&onewire_task, "onewire_task", 8192, NULL, 5, NULL);
 }

@@ -18,7 +18,7 @@ void onewire_example()
   owb_use_crc(owb, true); // enable CRC check for ROM code
 
   // Find all connected devices
-  printf("Find devices:\n");
+  //printf("Find devices:\n");
   OneWireBus_ROMCode device_rom_codes[MAX_DEVICES] = {0};
   int num_devices = 0;
   OneWireBus_SearchState search_state = {0};
@@ -28,12 +28,12 @@ void onewire_example()
   {
     char rom_code_s[17];
     owb_string_from_rom_code(search_state.rom_code, rom_code_s, sizeof(rom_code_s));
-    printf("  %d : %s\n", num_devices, rom_code_s);
+    //printf("  %d : %s\n", num_devices, rom_code_s);
     device_rom_codes[num_devices] = search_state.rom_code;
     ++num_devices;
     owb_search_next(owb, &search_state, &found);
   }
-  printf("Found %d device%s\n", num_devices, num_devices == 1 ? "" : "s");
+    //printf("Found %d device%s\n", num_devices, num_devices == 1 ? "" : "s");
 
   // In this example, if a single device is present, then the ROM code is probably
   // not very interesting, so just print it out. If there are multiple devices,
@@ -198,6 +198,11 @@ void onewire_task()
   TickType_t last_wake_time = xTaskGetTickCount();
   while(true)
   {
+    while(!mqtt_wait_for_connection(1000))
+    {
+      // MQTT not ready
+    }
+
     onewire_example();
     vTaskDelayUntil(&last_wake_time, SAMPLE_PERIOD / portTICK_PERIOD_MS);
   }

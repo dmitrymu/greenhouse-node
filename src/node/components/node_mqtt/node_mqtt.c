@@ -3,11 +3,20 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
+#include "freertos/event_groups.h"
 #include "mqtt_client.h"
 #include "node_mqtt.h"
 #include "node_wifi.h"
 
 static const char *TAG = "mqtt";
+
+static EventGroupHandle_t mqtt_event_group;
+
+enum mqtt_const_internal
+{
+    CONNECTED_BIT = BIT0,
+    DEFAULT_CONNECT_TIMEOUT_MS = 3000
+};
 
 static
 esp_mqtt_client_config_t mqtt_cfg = {
@@ -51,9 +60,11 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     int msg_id;
     switch ((esp_mqtt_event_id_t)event_id) {
     case MQTT_EVENT_CONNECTED:
+        xEventGroupSetBits(mqtt_event_group, CONNECTED_BIT);
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
         break;
     case MQTT_EVENT_DISCONNECTED:
+        xEventGroupClearBits(mqtt_event_group, CONNECTED_BIT);
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
         break;
 
@@ -89,7 +100,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 
 void mqtt_task(void* data)
 {
-    while (!wifi_wait_for_connection(3000))
+    while (!wifi_wait_for_connection(DEFAULT_CONNECT_TIMEOUT_MS))
     {
         ESP_LOGW(TAG, "Waiting for wifi connection");
     }
@@ -114,11 +125,22 @@ void mqtt_task(void* data)
 
 void mqtt_start()
 {
+    mqtt_event_group = xEventGroupCreate();
     mqtt_queue_handle = xQueueCreateStatic(MQTT_QUEUE_LENGTH,
                                            sizeof(mqtt_message_t),
                                            mqtt_queue_buf,
                                            &mqtt_queue);
     xTaskCreate(&mqtt_task, "mqtt_task", 8192, NULL, 5, NULL);
+}
+
+bool mqtt_wait_for_connection(int timeoutMS)
+{
+    int bits = xEventGroupWaitBits(mqtt_event_group,
+                                   CONNECTED_BIT,
+                                   pdFALSE,
+                                   pdTRUE,
+                                   timeoutMS / portTICK_PERIOD_MS);
+    return (bits & CONNECTED_BIT) != 0;
 }
 
 void mqtt_send_message(const mqtt_message_t *msg)

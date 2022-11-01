@@ -12,8 +12,12 @@ static const char *TAG = "wifi";
 
 static esp_netif_t *sta_netif = NULL;
 static EventGroupHandle_t wifi_event_group;
-const int CONNECTED_BIT = BIT0;
-const int DEFAULT_CONNECT_TIMEOUT_MS = 3000;
+
+enum wifi_const_internal
+{
+    CONNECTED_BIT = BIT0,
+    DEFAULT_CONNECT_TIMEOUT_MS = 3000
+};
 
 static void wifi_event_handler(void *arg, esp_event_base_t event_base,
                                int32_t event_id, void *event_data)

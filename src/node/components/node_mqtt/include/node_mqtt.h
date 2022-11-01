@@ -16,3 +16,5 @@ typedef struct mqtt_message
 void mqtt_start();
 
 void mqtt_send_message(const mqtt_message_t* msg);
+
+bool mqtt_wait_for_connection(int timeoutMS);

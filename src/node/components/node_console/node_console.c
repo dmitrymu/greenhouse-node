@@ -1,6 +1,7 @@
 #include "node_console.h"
 #include "cmd_nvs.h"
 #include "cmd_wifi.h"
+#include "cmd_sensors.h"
 #include "cmd_sys.h"
 #include "esp_console.h"
 
@@ -18,6 +19,7 @@ void console_run()
 
   esp_console_register_help_command();
   register_nvs();
+  register_sensors();
   register_system();
   register_wifi();
 

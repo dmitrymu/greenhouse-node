@@ -39,7 +39,8 @@ typedef struct mqtt_message
  * 
  * @return true if WiFi connected to AP, false otherwise.
 */
-bool node_network_start();
+bool
+node_network_start();
 
 /**
  * Wait for network ready to transport messages.
@@ -47,7 +48,12 @@ bool node_network_start();
  * @timeoutMS   wait timeout in milliseconds
  * @return true if network layer is ready for messaging, false otherwise
 */
-bool node_network_ready_wait(int timeoutMS);
+bool
+node_network_ready_wait(int timeoutMS);
 
+void node_mqtt_send_sensor_value(const char *name,
+                                 const char *quantity,
+                                 const char *unit,
+                                 float value);
 
-void node_mqtt_send_message(const mqtt_message_t* msg);
+void node_mqtt_send_message(const mqtt_message_t *msg);

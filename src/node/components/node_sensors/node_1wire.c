@@ -1,11 +1,12 @@
 #include <assert.h>
 #include <string.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "esp_log.h"
 #include "owb.h"
 #include "owb_rmt.h"
 #include "ds18b20.h"
 #include "node_network.h"
-#include "node_sensors.h"
 #include "node_sensors_private.h"
 
 enum sensors_1wire_const_internal
@@ -181,13 +182,12 @@ sensors_1wire_DS18B20_read()
     {
         if (errors[i] == DS18B20_OK)
         {
-            mqtt_message_t msg;
-            bzero(&msg, sizeof(msg));
-            snprintf(msg.topic, sizeof(msg.topic), "nodes/node1/%s/%s",
-                sensors_1wire[i].generic.quantity, sensors_1wire[i].generic.name);
-            snprintf(msg.data, sizeof(msg.data), "{\"value\": %.1f, \"unit\": \"%s\"}",
-            readings[i], sensors_1wire[i].generic.unit);
-            node_mqtt_send_message(&msg);
+            node_mqtt_send_sensor_value(
+                sensors_1wire[i].generic.name,
+                sensors_1wire[i].generic.quantity,
+                sensors_1wire[i].generic.unit,
+                readings[i]
+            );
         }
         else
         {

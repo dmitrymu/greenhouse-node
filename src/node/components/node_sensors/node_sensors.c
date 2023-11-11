@@ -5,6 +5,7 @@
 #include "freertos/semphr.h"
 #include "node_sensors.h"
 #include "node_1wire.h"
+#include "node_adc.h"
 
 static node_sensor_t* sensors_head = NULL;
 static node_sensor_t* sensors_tail = NULL;
@@ -25,6 +26,7 @@ node_sensors_start()
     assert(sensors_lock != NULL);
 
     sensors_1wire_start();
+    sensors_adc_start();
 }
 
 

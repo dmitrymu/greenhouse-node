@@ -4,6 +4,7 @@
  * 
  * All functions should be called after sensors_start().
 */
+#include "node_sensors.h"
 
 /**
  * Lock sensors list for thread-safe update.

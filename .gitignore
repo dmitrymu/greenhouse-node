@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# VS code settings
+.vscode
+
+# ESP-IDF 
+.devcontainer
+
+# Cmake
+build
